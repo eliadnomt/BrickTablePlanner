@@ -1,5 +1,5 @@
 from collections import defaultdict
-
+from baseplate import PLATE_32x32
 from brick import BRICKS, get_brick_size
 from plate import get_plate_size, PLATES
 from tile import get_tile_size, TILES
@@ -20,7 +20,7 @@ def classify_part(part_id):
     # ==================================================
     # BASEPLATE
     # ==================================================
-    if part == "3811":
+    if part_id == PLATE_32x32:
         return "PLATE_32x32"
 
     # ==================================================
@@ -127,7 +127,7 @@ def generate_bom_from_lines(lines):
 def print_bom(bom):
     """
     Print BOM grouped by section.
-    Plates and bricks are detailed by size.
+    Plates, bricks and tiles are detailed by size AND reference.
     """
 
     print("\n===== BILL OF MATERIALS =====\n")
@@ -146,23 +146,24 @@ def print_bom(bom):
         for part_id, count in parts.items():
 
             category = classify_part(part_id)
+            clean_ref = part_id.replace(".dat", "")
 
             if category == "PLATES":
                 size = get_plate_size(part_id)
                 if size:
-                    plate_details[size] += count
+                    plate_details[(size, clean_ref)] += count
                 category_totals["PLATES"] += count
 
             elif category == "BRICKS":
                 size = get_brick_size(part_id)
                 if size:
-                    brick_details[size] += count
+                    brick_details[(size, clean_ref)] += count
                 category_totals["BRICKS"] += count
 
             elif category == "TILES":
                 size = get_tile_size(part_id)
                 if size:
-                    tile_details[size] += count
+                    tile_details[(size, clean_ref)] += count
                 category_totals["TILES"] += count
 
             else:
@@ -170,28 +171,32 @@ def print_bom(bom):
 
             total += count
 
-        # --- Non plate/brick categories ---
+        # --- Print non size-based categories ---
         for category in sorted(category_totals.keys()):
-            if category in {"PLATES", "BRICKS"}:
+            if category in {"PLATES", "BRICKS", "TILES"}:
                 continue
             print(f"{category:20} x {category_totals[category]}")
 
         # --- Plates detail ---
         if plate_details:
             print("PLATES:")
-            for w, l in sorted(plate_details.keys()):
-                print(f"  {w}x{l:<3} x {plate_details[(w, l)]}")
+            for (w, l), ref in sorted(plate_details.keys()):
+                count = plate_details[((w, l), ref)]
+                print(f"  {w}x{l:<3}  ({ref})   x {count}")
 
         # --- Bricks detail ---
         if brick_details:
             print("BRICKS:")
-            for w, l in sorted(brick_details.keys()):
-                print(f"  {w}x{l:<3} x {brick_details[(w, l)]}")
+            for (w, l), ref in sorted(brick_details.keys()):
+                count = brick_details[((w, l), ref)]
+                print(f"  {w}x{l:<3}  ({ref})   x {count}")
 
+        # --- Tiles detail ---
         if tile_details:
             print("TILES:")
-            for w, l in sorted(tile_details.keys()):
-                print(f"  {w}x{l:<3} x {tile_details[(w, l)]}")
+            for (w, l), ref in sorted(tile_details.keys()):
+                count = tile_details[((w, l), ref)]
+                print(f"  {w}x{l:<3}  ({ref})   x {count}")
 
         print(f"Total {section}: {total}\n")
 
@@ -204,7 +209,7 @@ def print_bom(bom):
 def print_global_summary(bom):
     """
     Print consolidated global summary.
-    Plates and bricks are detailed by size.
+    Plates, bricks and tiles are detailed by size AND reference.
     """
 
     global_counts = defaultdict(int)
@@ -221,26 +226,30 @@ def print_global_summary(bom):
     brick_details = defaultdict(int)
     tile_details = defaultdict(int)
 
+    # ----------------------------------------------------
+    # Aggregate
+    # ----------------------------------------------------
     for part_id, count in global_counts.items():
 
         category = classify_part(part_id)
+        clean_ref = part_id.replace(".dat", "")
 
         if category == "PLATES":
             size = get_plate_size(part_id)
             if size:
-                plate_details[size] += count
+                plate_details[(size, clean_ref)] += count
             category_totals["PLATES"] += count
 
         elif category == "BRICKS":
             size = get_brick_size(part_id)
             if size:
-                brick_details[size] += count
+                brick_details[(size, clean_ref)] += count
             category_totals["BRICKS"] += count
 
         elif category == "TILES":
             size = get_tile_size(part_id)
             if size:
-                tile_details[size] += count
+                tile_details[(size, clean_ref)] += count
             category_totals["TILES"] += count
 
         else:
@@ -248,27 +257,50 @@ def print_global_summary(bom):
 
     total_all = 0
 
-    # --- Print non plate/brick categories ---
+    # ----------------------------------------------------
+    # Print non size-based categories
+    # ----------------------------------------------------
     for category in sorted(category_totals.keys()):
-        if category in {"PLATES", "BRICKS"}:
+
+        if category in {"PLATES", "BRICKS", "TILES"}:
             continue
-        print(f"{category:20} x {category_totals[category]}")
+
+        if category == "PLATE_32x32":
+            ref = PLATE_32x32.replace(".dat", "")
+            print(f"{category:20} ({ref})   x {category_totals[category]}")
+        else:
+            print(f"{category:20} x {category_totals[category]}")
+
         total_all += category_totals[category]
 
-    # --- Plates detail ---
+    # ----------------------------------------------------
+    # Plates
+    # ----------------------------------------------------
     if plate_details:
         print("\nPLATES:")
-        for w, l in sorted(plate_details.keys()):
-            count = plate_details[(w, l)]
-            print(f"  {w}x{l:<3} x {count}")
+        for (w, l), ref in sorted(plate_details.keys()):
+            count = plate_details[((w, l), ref)]
+            print(f"  {w}x{l:<3}  ({ref})   x {count}")
             total_all += count
 
-    # --- Bricks detail ---
+    # ----------------------------------------------------
+    # Bricks
+    # ----------------------------------------------------
     if brick_details:
         print("\nBRICKS:")
-        for w, l in sorted(brick_details.keys()):
-            count = brick_details[(w, l)]
-            print(f"  {w}x{l:<3} x {count}")
+        for (w, l), ref in sorted(brick_details.keys()):
+            count = brick_details[((w, l), ref)]
+            print(f"  {w}x{l:<3}  ({ref})   x {count}")
+            total_all += count
+
+    # ----------------------------------------------------
+    # Tiles
+    # ----------------------------------------------------
+    if tile_details:
+        print("\nTILES:")
+        for (w, l), ref in sorted(tile_details.keys()):
+            count = tile_details[((w, l), ref)]
+            print(f"  {w}x{l:<3}  ({ref})   x {count}")
             total_all += count
 
     print(f"\nTOTAL PIECES: {total_all}\n")
