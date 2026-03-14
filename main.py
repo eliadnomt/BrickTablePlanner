@@ -53,9 +53,9 @@ def build_group_frame(ctx, center_stud_x, center_stud_z, color=15):
     top = bottom + (height - 1)
 
     # -------------------------
-    # TOP & BOTTOM (32 = 12 + 12 + 8)
+    # TOP & BOTTOM (32 = 4 + 6 + 6 + 6 + 6 + 4)
     # -------------------------
-    horizontal_segments = [12, 12, 8]
+    horizontal_segments = [4, 6, 6, 6, 6, 4]
 
     for z_edge in (bottom, top):
         x_start = left
@@ -66,9 +66,9 @@ def build_group_frame(ctx, center_stud_x, center_stud_z, color=15):
             x_start += length
 
     # --------------------------------
-    # LEFT & RIGHT (30 - 2 = 28 = 12 + 12 + 4)
+    # LEFT & RIGHT (30 - 2 = 28 = 6 + 6 + 6 + 6 + 4)
     # --------------------------------
-    vertical_segments = [12, 12, 4]
+    vertical_segments = [6, 6, 6, 6, 4]
 
     for x_edge in (left, right):
         z_start = bottom + 1  # exclude bottom corner
