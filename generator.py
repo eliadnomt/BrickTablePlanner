@@ -70,16 +70,16 @@ def build_group(ctx, template, digit, center_stud_x, center_stud_z, color=15):
     # This avoids the broken spacing caused by a 4x3 grid with 2 removed cells.
 
     positions = [
-        (-11, 11),
-        (-4, 11),
-        (4, 11),
-        (11, 11),
-        (-11, 0),
-        (11, 0),
-        (-11, -11),
-        (-4, -11),
-        (4, -11),
-        (11, -11),
+        (-11, 9),
+        (-4, 9),
+        (4, 9),
+        (11, 9),
+        (-11, -2),
+        (11, -2),
+        (-11, -13),
+        (-4, -13),
+        (4, -13),
+        (11, -13),
     ]
 
     for x_offset, z_offset in positions:
