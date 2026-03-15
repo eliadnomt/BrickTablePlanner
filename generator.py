@@ -62,26 +62,24 @@ def build_group(ctx, template, digit, center_stud_x, center_stud_z, color=15):
 
     lines.append("0 -- Minifigures --")
 
-    spacing_x = 8
-    spacing_z = 8
-
     # Explicit layout:
     # top:    4 minifigs
     # middle: 2 minifigs
     # bottom: 4 minifigs
     #
     # This avoids the broken spacing caused by a 4x3 grid with 2 removed cells.
+
     positions = [
-        (-12, 8),
-        (-4, 8),
-        (4, 8),
-        (12, 8),
-        (-12, 0),
-        (12, 0),
-        (-12, -8),
-        (-4, -8),
-        (4, -8),
-        (12, -8),
+        (-11, 11),
+        (-4, 11),
+        (4, 11),
+        (11, 11),
+        (-11, 0),
+        (11, 0),
+        (-11, -11),
+        (-4, -11),
+        (4, -11),
+        (11, -11),
     ]
 
     for x_offset, z_offset in positions:
