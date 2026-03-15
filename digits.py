@@ -122,20 +122,10 @@ def build_centered_digit(ctx, text, center_stud_x, center_stud_z, color=15):
     height = len(matrix)
     width = len(matrix[0])
 
-    origin_x = center_stud_x - (width - 1) / 2
-    origin_z = center_stud_z - (height - 1) / 2
+    origin_x = ctx.snap_to_stud(center_stud_x - (width - 1) / 2)
+    origin_z = ctx.snap_to_stud(center_stud_z - (height - 1) / 2)
 
     lines = []
-
-    # ---------------------------------------------------------------------
-    # Stud grid alignment correction
-    #
-    # Baseplates are positioned by their geometric center.
-    # However, LEGO studs are positioned on integer coordinates.
-    #
-    # A half-stud offset ensures the bitmap aligns exactly on the stud grid.
-    # ---------------------------------------------------------------------
-    half_stud = 0.5
 
     for row_index, row in enumerate(matrix):
         for col_index, pixel in enumerate(row):
@@ -147,7 +137,7 @@ def build_centered_digit(ctx, text, center_stud_x, center_stud_z, color=15):
 
             x = ctx.studs(stud_x)
             z = ctx.studs(stud_z)
-            y = ctx.baseplate_top_origin_y - half_stud
+            y = ctx.baseplate_top_origin_y
 
             lines.append(
                 f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"

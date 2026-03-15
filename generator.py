@@ -61,22 +61,33 @@ def build_group(ctx, template, digit, center_stud_x, center_stud_z, color=15):
     lines.extend(build_centered_digit(ctx, digit, center_stud_x, center_stud_z, color))
 
     lines.append("0 -- Minifigures --")
-    spacing = 8
-    cols = 4
-    rows = 3
 
-    for row in range(rows):
-        for col in range(cols):
-            if row == 1 and col in (1, 2):
-                continue
+    spacing_x = 8
+    spacing_z = 8
 
-            x_offset = (col - (cols - 1) / 2) * spacing
-            z_offset = (row - (rows - 1) / 2) * spacing
+    # Explicit layout:
+    # top:    4 minifigs
+    # middle: 2 minifigs
+    # bottom: 4 minifigs
+    #
+    # This avoids the broken spacing caused by a 4x3 grid with 2 removed cells.
+    positions = [
+        (-12, 8),
+        (-4, 8),
+        (4, 8),
+        (12, 8),
+        (-12, 0),
+        (12, 0),
+        (-12, -8),
+        (-4, -8),
+        (4, -8),
+        (12, -8),
+    ]
 
-            fx = center_stud_x + x_offset
-            fz = center_stud_z + z_offset
-
-            lines.extend(build_minifig(ctx, template, stud_x=fx, stud_z=fz))
+    for x_offset, z_offset in positions:
+        fx = center_stud_x + x_offset
+        fz = center_stud_z + z_offset
+        lines.extend(build_minifig(ctx, template, stud_x=fx, stud_z=fz))
 
     lines.append("0 -- Frame --")
     lines.extend(build_group_frame(ctx, center_stud_x, center_stud_z))

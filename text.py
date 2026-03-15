@@ -256,17 +256,6 @@ LETTERS_5x7 = {
 }
 
 
-def _snap_to_stud(value):
-    """
-    Snap a stud-space coordinate to the nearest stud center.
-
-    In this project, baseplates are positioned by their geometric center on
-    integer stud coordinates (0, 32, 64, ...). Therefore actual stud centers
-    lie on half-integer coordinates (..., -0.5, 0.5, 1.5, ...).
-    """
-    return round(value - 0.5) + 0.5
-
-
 def measure_text(text, letter_spacing=1, line_spacing=1, vertical=False):
     if not text:
         return 0, 0
@@ -296,8 +285,8 @@ def build_text_from_top_left(
 
     lines = []
 
-    cursor_x = _snap_to_stud(start_stud_x)
-    start_stud_z = _snap_to_stud(start_stud_z)
+    cursor_x = ctx.snap_to_stud(start_stud_x)
+    start_stud_z = ctx.snap_to_stud(start_stud_z)
 
     for char in text.upper():
         if char not in LETTERS_5x7:
@@ -339,8 +328,8 @@ def build_text_vertical_from_top_left(
 
     lines = []
 
-    start_stud_x = _snap_to_stud(start_stud_x)
-    cursor_z = _snap_to_stud(start_stud_z)
+    start_stud_x = ctx.snap_to_stud(start_stud_x)
+    cursor_z = ctx.snap_to_stud(start_stud_z)
 
     for char in text.upper():
         if char not in LETTERS_5x7:
