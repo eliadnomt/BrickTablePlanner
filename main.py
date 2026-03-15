@@ -1,15 +1,19 @@
 import argparse
 
 from generator import generate_model
-from topologies import list_topologies
+from topologies import get_topology_names
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate a LEGO wedding seating chart")
+    parser = argparse.ArgumentParser(
+        description="Generate a LEGO wedding seating chart"
+    )
     parser.add_argument("--partner1", default="SOPHIE")
     parser.add_argument("--partner2", default="LAURENT")
     parser.add_argument("--guests", type=int, default=100)
-    parser.add_argument("--topology", choices=list_topologies(), default="two_columns_center_names")
+    parser.add_argument(
+        "--topology", choices=get_topology_names(), default="two_columns_center_names"
+    )
     parser.add_argument("--output", default=None)
     parser.add_argument("--template", default=None)
     args = parser.parse_args()
