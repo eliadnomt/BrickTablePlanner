@@ -47,14 +47,14 @@ def compute_layout(table_count, topology_key):
         if table_count > 10:
             raise ValueError("two_columns_center_names supports up to 10 tables")
 
-        # Requested layout:
+        # Layout:
         # 1   6
         # 2   7
         # 3   8
         # 4   9
         # 5  10
         #
-        # Names are in the center column.
+        # Names are on the CENTER column (plate_col = 1).
         grid_cols = 3
         grid_rows = 5
 
@@ -74,7 +74,7 @@ def compute_layout(table_count, topology_key):
         name_positions = [
             {
                 "slot": "partner1",
-                "plate_row": 3,
+                "plate_row": 2,
                 "plate_col": 1,
                 "center": True,
                 "orientation": "vertical",
@@ -83,7 +83,7 @@ def compute_layout(table_count, topology_key):
             },
             {
                 "slot": "partner2",
-                "plate_row": 4,
+                "plate_row": 3,
                 "plate_col": 1,
                 "center": True,
                 "orientation": "vertical",
@@ -101,11 +101,11 @@ def compute_layout(table_count, topology_key):
 
     if topology_key == "three_columns_bottom_names":
         # 3 columns of tables, names centered on the bottom row.
-        table_positions = []
-
         grid_cols = 3
         table_rows = (table_count + grid_cols - 1) // grid_cols
         grid_rows = table_rows + 1  # extra row for names below
+
+        table_positions = []
 
         for i in range(table_count):
             digit = str(i + 1)

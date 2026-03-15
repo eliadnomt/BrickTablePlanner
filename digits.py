@@ -147,7 +147,7 @@ def build_centered_digit(ctx, text, center_stud_x, center_stud_z, color=15):
 
             x = ctx.studs(stud_x)
             z = ctx.studs(stud_z)
-            y = ctx.baseplate_top_origin_y + half_stud
+            y = ctx.baseplate_top_origin_y - half_stud
 
             lines.append(
                 f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
