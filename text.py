@@ -1,3 +1,5 @@
+from catalog import Parts
+
 LETTERS_5x7 = {
     "A": [
         "..#..",
@@ -233,6 +235,15 @@ LETTERS_5x7 = {
         "#....",
         "#####",
     ],
+    "-": [
+        ".....",
+        ".....",
+        "#####",
+        ".....",
+        ".....",
+        ".....",
+        ".....",
+    ],
     " ": [
         ".....",
         ".....",
@@ -242,72 +253,85 @@ LETTERS_5x7 = {
         ".....",
         ".....",
     ],
-    "-": [
-        ".....",
-        ".....",
-        ".....",
-        "#####",
-        ".....",
-        ".....",
-        ".....",
-    ],
 }
 
 
-PLATE_1x1 = "3024.dat"
+def measure_text(text, letter_spacing=1, line_spacing=1, vertical=False):
+    if not text:
+        return 0, 0
+
+    char_width = 5
+    char_height = 7
+
+    if vertical:
+        width = char_width
+        height = len(text) * char_height + (len(text) - 1) * line_spacing
+        return width, height
+
+    width = len(text) * char_width + (len(text) - 1) * letter_spacing
+    height = char_height
+    return width, height
 
 
 def build_text_from_top_left(
-    ctx,
-    text,
-    start_stud_x,
-    start_stud_z,
-    color=15,
-    letter_spacing=1,
+    ctx, text, start_stud_x, start_stud_z, color=15, letter_spacing=1
 ):
-    """
-    Render a single-line text starting from TOP-LEFT stud position.
-
-    Parameters
-    ----------
-    start_stud_x : float
-        Left-most stud coordinate.
-    start_stud_z : float
-        TOP-most stud coordinate.
-    """
-
     lines = []
     cursor_x = start_stud_x
 
     for char in text.upper():
-
         if char not in LETTERS_5x7:
             raise ValueError(f"Unsupported character: {char}")
 
         bitmap = LETTERS_5x7[char]
-        height = len(bitmap)
-        width = len(bitmap[0])
-
-        for row_idx in range(height):
-            for col_idx in range(width):
-
-                if bitmap[row_idx][col_idx] != "#":
+        for row_index, row in enumerate(bitmap):
+            for col_index, pixel in enumerate(row):
+                if pixel != "#":
                     continue
 
-                stud_x = cursor_x + col_idx
-
-                # 🔥 now writing downward
-                stud_z = start_stud_z - row_idx
+                stud_x = cursor_x + col_index
+                stud_z = start_stud_z - row_index
 
                 x = ctx.studs(stud_x)
                 z = ctx.studs(stud_z)
                 y = ctx.baseplate_top_origin_y
 
                 lines.append(
-                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} "
-                    f"1 0 0 0 1 0 0 0 1 {PLATE_1x1}"
+                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
                 )
 
-        cursor_x += width + letter_spacing
+        cursor_x += 5 + letter_spacing
+
+    return lines
+
+
+def build_text_vertical_from_top_left(
+    ctx, text, start_stud_x, start_stud_z, color=15, line_spacing=1
+):
+    lines = []
+    cursor_z = start_stud_z
+
+    for char in text.upper():
+        if char not in LETTERS_5x7:
+            raise ValueError(f"Unsupported character: {char}")
+
+        bitmap = LETTERS_5x7[char]
+        for row_index, row in enumerate(bitmap):
+            for col_index, pixel in enumerate(row):
+                if pixel != "#":
+                    continue
+
+                stud_x = start_stud_x + col_index
+                stud_z = cursor_z - row_index
+
+                x = ctx.studs(stud_x)
+                z = ctx.studs(stud_z)
+                y = ctx.baseplate_top_origin_y
+
+                lines.append(
+                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                )
+
+        cursor_z -= 7 + line_spacing
 
     return lines

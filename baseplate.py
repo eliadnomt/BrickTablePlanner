@@ -1,37 +1,7 @@
-"""
-baseplate.py
-
-Build rectangular grids of 32x32 baseplates.
-"""
-
 from catalog import Parts
 
-PLATE_32x32 = Parts.PLATE_32x32
 
-
-def build_baseplate_grid(
-    ctx,
-    cols,
-    rows,
-    color=1,
-    origin_x_stud=0,
-    origin_z_stud=0,
-):
-    """
-    Build a grid of 32x32 baseplates.
-
-    Parameters
-    ----------
-    cols : int
-        Number of baseplates along X.
-    rows : int
-        Number of baseplates along Z.
-    origin_x_stud : int
-        Stud offset of the first column.
-    origin_z_stud : int
-        Stud offset of the first row.
-    """
-
+def build_baseplate_grid(ctx, cols, rows, color=1, origin_x_stud=0, origin_z_stud=0):
     lines = []
 
     for r in range(rows):
@@ -39,9 +9,8 @@ def build_baseplate_grid(
             x = ctx.studs(origin_x_stud + c * 32)
             y = ctx.baseplate_origin_y
             z = ctx.studs(origin_z_stud + r * 32)
-
             lines.append(
-                f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {PLATE_32x32}"
+                f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_32x32}"
             )
 
     return lines

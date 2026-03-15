@@ -195,3 +195,114 @@ def print_global_summary(bom):
 
     # printed_total should match total; keep total as source of truth
     print(f"\nTOTAL PIECES: {total}\n")
+
+
+def format_bom_text(bom):
+    """
+    Return the BOM as a formatted string for display in the UI.
+    """
+
+    lines = []
+    lines.append("===== BILL OF MATERIALS =====")
+    lines.append("")
+
+    for section, parts in bom.items():
+        lines.append(f"--- {section} ---")
+
+        category_totals, size_details, total = _aggregate_parts(parts)
+
+        ordered_categories = [
+            Categories.PLATE_32x32,
+            Categories.PLATE_1x1,
+            Categories.MINIFIG_HEAD,
+            Categories.MINIFIG_TORSO,
+            Categories.MINIFIG_ARMS,
+            Categories.MINIFIG_HANDS,
+            Categories.MINIFIG_LEGS,
+            Categories.MINIFIG_ACCESSORY,
+        ]
+
+        for category in ordered_categories:
+            if category not in category_totals:
+                continue
+
+            if category == Categories.PLATE_32x32:
+                ref = _clean_ref(Parts.PLATE_32x32)
+                lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
+            elif category == Categories.PLATE_1x1:
+                ref = _clean_ref(Parts.PLATE_1x1)
+                lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
+            else:
+                lines.append(f"{category:20} x {category_totals[category]}")
+
+        for category in [
+            Categories.PLATES,
+            Categories.PLATES_MODIFIED,
+            Categories.BRICKS,
+            Categories.TILES,
+        ]:
+            details = size_details.get(category, {})
+            if not details:
+                continue
+
+            lines.append(f"{category}:")
+            for (width, length), ref in sorted(details.keys()):
+                count = details[((width, length), ref)]
+                lines.append(f"  {width}x{length:<3} ({ref})   x {count}")
+
+        lines.append(f"Total {section}: {total}")
+        lines.append("")
+
+    lines.append("===== GLOBAL SUMMARY =====")
+    lines.append("")
+
+    global_counts = defaultdict(int)
+    for section_parts in bom.values():
+        for part_id, count in section_parts.items():
+            global_counts[part_id] += count
+
+    category_totals, size_details, total = _aggregate_parts(global_counts)
+
+    ordered_categories = [
+        Categories.PLATE_32x32,
+        Categories.PLATE_1x1,
+        Categories.MINIFIG_HEAD,
+        Categories.MINIFIG_TORSO,
+        Categories.MINIFIG_ARMS,
+        Categories.MINIFIG_HANDS,
+        Categories.MINIFIG_LEGS,
+        Categories.MINIFIG_ACCESSORY,
+    ]
+
+    for category in ordered_categories:
+        if category not in category_totals:
+            continue
+
+        if category == Categories.PLATE_32x32:
+            ref = _clean_ref(Parts.PLATE_32x32)
+            lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
+        elif category == Categories.PLATE_1x1:
+            ref = _clean_ref(Parts.PLATE_1x1)
+            lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
+        else:
+            lines.append(f"{category:20} x {category_totals[category]}")
+
+    for category in [
+        Categories.PLATES,
+        Categories.PLATES_MODIFIED,
+        Categories.BRICKS,
+        Categories.TILES,
+    ]:
+        details = size_details.get(category, {})
+        if not details:
+            continue
+
+        lines.append(f"{category}:")
+        for (width, length), ref in sorted(details.keys()):
+            count = details[((width, length), ref)]
+            lines.append(f"  {width}x{length:<3} ({ref})   x {count}")
+
+    lines.append("")
+    lines.append(f"TOTAL PIECES: {total}")
+
+    return "\n".join(lines)
