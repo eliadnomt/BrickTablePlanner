@@ -1,3 +1,4 @@
+import signal
 import sys
 from PySide6.QtWidgets import (
     QMainWindow,
@@ -13,7 +14,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QSplitter,
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 
 from bom import generate_bom_from_lines, format_bom_text
 from generator import generate_model
@@ -133,6 +134,15 @@ def main():
     window = MainWindow()
     window.resize(1100, 700)
     window.show()
+
+    # Allow Ctrl+C to terminate the Qt event loop cleanly.
+    signal.signal(signal.SIGINT, lambda *_: app.quit())
+
+    # Keep Python responsive to signals while Qt runs.
+    timer = QTimer()
+    timer.start(200)
+    timer.timeout.connect(lambda: None)
+
     sys.exit(app.exec())
 
 
