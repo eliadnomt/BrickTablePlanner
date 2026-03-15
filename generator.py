@@ -115,9 +115,28 @@ def build_text_on_baseplate(
     delta_x=0,
     delta_z=0,
 ):
+    """
+    Render text inside one logical baseplate cell.
+
+    Important:
+    - plate_col * studs_per_plate and row_from_bottom * studs_per_plate are the
+      CENTER coordinates of the baseplate in this project.
+    - Therefore we must first convert that center to the baseplate bounds in
+      stud space before placing centered text.
+    """
+
     row_from_bottom = (grid_rows - 1) - plate_row
-    base_x = plate_col * studs_per_plate
-    base_z = row_from_bottom * studs_per_plate
+
+    # Baseplate center in stud space
+    center_x = plate_col * studs_per_plate
+    center_z = row_from_bottom * studs_per_plate
+
+    # Real usable baseplate bounds in stud space
+    half_span = (studs_per_plate - 1) / 2
+    left_x = center_x - half_span
+    right_x = center_x + half_span
+    bottom_z = center_z - half_span
+    top_z = center_z + half_span
 
     width, height = measure_text(
         text,
@@ -127,11 +146,11 @@ def build_text_on_baseplate(
     )
 
     if center:
-        start_x = base_x + (studs_per_plate - width) / 2
-        start_z = base_z + (studs_per_plate + height) / 2 - 1
+        start_x = left_x + (studs_per_plate - width) / 2
+        start_z = top_z - (studs_per_plate - height) / 2
     else:
-        start_x = base_x + 4
-        start_z = base_z + studs_per_plate - 4
+        start_x = left_x + 4
+        start_z = top_z - 4
 
     start_x += delta_x
     start_z += delta_z

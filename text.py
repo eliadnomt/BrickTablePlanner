@@ -256,6 +256,17 @@ LETTERS_5x7 = {
 }
 
 
+def _snap_to_stud(value):
+    """
+    Snap a stud-space coordinate to the nearest stud center.
+
+    In this project, baseplates are positioned by their geometric center on
+    integer stud coordinates (0, 32, 64, ...). Therefore actual stud centers
+    lie on half-integer coordinates (..., -0.5, 0.5, 1.5, ...).
+    """
+    return round(value - 0.5) + 0.5
+
+
 def measure_text(text, letter_spacing=1, line_spacing=1, vertical=False):
     if not text:
         return 0, 0
@@ -276,14 +287,24 @@ def measure_text(text, letter_spacing=1, line_spacing=1, vertical=False):
 def build_text_from_top_left(
     ctx, text, start_stud_x, start_stud_z, color=15, letter_spacing=1
 ):
+    """
+    Render horizontal text from a top-left anchor.
+
+    The anchor is snapped to the real stud grid used by this project:
+    stud centers are on half-integer coordinates.
+    """
+
     lines = []
-    cursor_x = start_stud_x
+
+    cursor_x = _snap_to_stud(start_stud_x)
+    start_stud_z = _snap_to_stud(start_stud_z)
 
     for char in text.upper():
         if char not in LETTERS_5x7:
             raise ValueError(f"Unsupported character: {char}")
 
         bitmap = LETTERS_5x7[char]
+
         for row_index, row in enumerate(bitmap):
             for col_index, pixel in enumerate(row):
                 if pixel != "#":
@@ -297,7 +318,8 @@ def build_text_from_top_left(
                 y = ctx.baseplate_top_origin_y
 
                 lines.append(
-                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} "
+                    f"1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
                 )
 
         cursor_x += 5 + letter_spacing
@@ -308,14 +330,24 @@ def build_text_from_top_left(
 def build_text_vertical_from_top_left(
     ctx, text, start_stud_x, start_stud_z, color=15, line_spacing=1
 ):
+    """
+    Render vertical text from a top-left anchor.
+
+    The anchor is snapped to the real stud grid used by this project:
+    stud centers are on half-integer coordinates.
+    """
+
     lines = []
-    cursor_z = start_stud_z
+
+    start_stud_x = _snap_to_stud(start_stud_x)
+    cursor_z = _snap_to_stud(start_stud_z)
 
     for char in text.upper():
         if char not in LETTERS_5x7:
             raise ValueError(f"Unsupported character: {char}")
 
         bitmap = LETTERS_5x7[char]
+
         for row_index, row in enumerate(bitmap):
             for col_index, pixel in enumerate(row):
                 if pixel != "#":
@@ -329,7 +361,8 @@ def build_text_vertical_from_top_left(
                 y = ctx.baseplate_top_origin_y
 
                 lines.append(
-                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                    f"1 {color} {x:.6f} {y:.6f} {z:.6f} "
+                    f"1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
                 )
 
         cursor_z -= 7 + line_spacing

@@ -74,7 +74,7 @@ def compute_layout(table_count, topology_key):
         name_positions = [
             {
                 "slot": "partner1",
-                "plate_row": 2,
+                "plate_row": 1,
                 "plate_col": 1,
                 "center": True,
                 "orientation": "vertical",
@@ -83,7 +83,7 @@ def compute_layout(table_count, topology_key):
             },
             {
                 "slot": "partner2",
-                "plate_row": 3,
+                "plate_row": 2,
                 "plate_col": 1,
                 "center": True,
                 "orientation": "vertical",
