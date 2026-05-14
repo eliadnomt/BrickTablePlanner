@@ -4,10 +4,10 @@ plate.py
 Helpers and indexes for standard LEGO plates.
 """
 
-from catalog import Categories, Parts, build_index_for_category
+from catalog.utils import build_index_for_category, get_metadata
 
-PLATE_1x1 = Parts.PLATE_1x1
-PLATES = build_index_for_category(Categories.PLATES)
+PLATE_1x1 = "3024.dat"
+PLATES = build_index_for_category("PLATES")
 
 
 def build_plate(ctx, stud_x, stud_z, color, length):

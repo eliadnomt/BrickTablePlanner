@@ -1,5 +1,3 @@
-from catalog import Parts
-
 DIGITS_5x7 = {
     "1": [
         "..#..",
@@ -140,7 +138,7 @@ def build_centered_digit(ctx, text, center_stud_x, center_stud_z, color=15):
             y = ctx.baseplate_top_origin_y
 
             lines.append(
-                f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                f"1 {color} {x:.6f} {y:.6f} {z:.6f} 1 0 0 0 1 0 0 0 1 3024.dat"
             )
 
     return lines

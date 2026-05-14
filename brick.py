@@ -4,6 +4,6 @@ brick.py
 Indexes for standard LEGO bricks.
 """
 
-from catalog import Categories, build_index_for_category
+from catalog.utils import build_index_for_category
 
-BRICKS = build_index_for_category(Categories.BRICKS)
+BRICKS = build_index_for_category("BRICKS")

@@ -9,7 +9,7 @@ It does not hardcode part categories locally.
 
 from collections import defaultdict
 
-from catalog import Categories, Parts, get_category, get_size
+from catalog.utils import get_category, get_size
 
 
 def generate_bom_from_lines(lines):
@@ -75,14 +75,7 @@ def _print_non_sized_categories(category_totals):
     """
 
     ordered_categories = [
-        Categories.PLATE_32x32,
-        Categories.PLATE_1x1,
-        Categories.MINIFIG_HEAD,
-        Categories.MINIFIG_TORSO,
-        Categories.MINIFIG_ARMS,
-        Categories.MINIFIG_HANDS,
-        Categories.MINIFIG_LEGS,
-        Categories.MINIFIG_ACCESSORY,
+        "MINIFIGS",
     ]
 
     subtotal = 0
@@ -91,14 +84,7 @@ def _print_non_sized_categories(category_totals):
         if category not in category_totals:
             continue
 
-        if category == Categories.PLATE_32x32:
-            ref = _clean_ref(Parts.PLATE_32x32)
-            print(f"{category:20} ({ref})   x {category_totals[category]}")
-        elif category == Categories.PLATE_1x1:
-            ref = _clean_ref(Parts.PLATE_1x1)
-            print(f"{category:20} ({ref})   x {category_totals[category]}")
-        else:
-            print(f"{category:20} x {category_totals[category]}")
+        print(f"{category:20} x {category_totals[category]}")
 
         subtotal += category_totals[category]
 
@@ -139,20 +125,16 @@ def print_bom(bom):
         _print_non_sized_categories(category_totals)
 
         _print_sized_category(
-            Categories.PLATES,
-            size_details.get(Categories.PLATES, {}),
+            "PLATES",
+            size_details.get("PLATES", {}),
         )
         _print_sized_category(
-            Categories.PLATES_MODIFIED,
-            size_details.get(Categories.PLATES_MODIFIED, {}),
+            "BRICKS",
+            size_details.get("BRICKS", {}),
         )
         _print_sized_category(
-            Categories.BRICKS,
-            size_details.get(Categories.BRICKS, {}),
-        )
-        _print_sized_category(
-            Categories.TILES,
-            size_details.get(Categories.TILES, {}),
+            "TILES",
+            size_details.get("TILES", {}),
         )
 
         print(f"Total {section}: {total}\n")
@@ -177,20 +159,16 @@ def print_global_summary(bom):
     printed_total += _print_non_sized_categories(category_totals)
 
     printed_total += _print_sized_category(
-        Categories.PLATES,
-        size_details.get(Categories.PLATES, {}),
+        "PLATES",
+        size_details.get("PLATES", {}),
     )
     printed_total += _print_sized_category(
-        Categories.PLATES_MODIFIED,
-        size_details.get(Categories.PLATES_MODIFIED, {}),
+        "BRICKS",
+        size_details.get("BRICKS", {}),
     )
     printed_total += _print_sized_category(
-        Categories.BRICKS,
-        size_details.get(Categories.BRICKS, {}),
-    )
-    printed_total += _print_sized_category(
-        Categories.TILES,
-        size_details.get(Categories.TILES, {}),
+        "TILES",
+        size_details.get("TILES", {}),
     )
 
     # printed_total should match total; keep total as source of truth
@@ -212,34 +190,19 @@ def format_bom_text(bom):
         category_totals, size_details, total = _aggregate_parts(parts)
 
         ordered_categories = [
-            Categories.PLATE_32x32,
-            Categories.PLATE_1x1,
-            Categories.MINIFIG_HEAD,
-            Categories.MINIFIG_TORSO,
-            Categories.MINIFIG_ARMS,
-            Categories.MINIFIG_HANDS,
-            Categories.MINIFIG_LEGS,
-            Categories.MINIFIG_ACCESSORY,
+            "MINIFIGS",
         ]
 
         for category in ordered_categories:
             if category not in category_totals:
                 continue
 
-            if category == Categories.PLATE_32x32:
-                ref = _clean_ref(Parts.PLATE_32x32)
-                lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
-            elif category == Categories.PLATE_1x1:
-                ref = _clean_ref(Parts.PLATE_1x1)
-                lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
-            else:
-                lines.append(f"{category:20} x {category_totals[category]}")
+            lines.append(f"{category:20} x {category_totals[category]}")
 
         for category in [
-            Categories.PLATES,
-            Categories.PLATES_MODIFIED,
-            Categories.BRICKS,
-            Categories.TILES,
+            "PLATES",
+            "BRICKS",
+            "TILES",
         ]:
             details = size_details.get(category, {})
             if not details:
@@ -264,34 +227,19 @@ def format_bom_text(bom):
     category_totals, size_details, total = _aggregate_parts(global_counts)
 
     ordered_categories = [
-        Categories.PLATE_32x32,
-        Categories.PLATE_1x1,
-        Categories.MINIFIG_HEAD,
-        Categories.MINIFIG_TORSO,
-        Categories.MINIFIG_ARMS,
-        Categories.MINIFIG_HANDS,
-        Categories.MINIFIG_LEGS,
-        Categories.MINIFIG_ACCESSORY,
+        "MINIFIGS",
     ]
 
     for category in ordered_categories:
         if category not in category_totals:
             continue
 
-        if category == Categories.PLATE_32x32:
-            ref = _clean_ref(Parts.PLATE_32x32)
-            lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
-        elif category == Categories.PLATE_1x1:
-            ref = _clean_ref(Parts.PLATE_1x1)
-            lines.append(f"{category:20} ({ref})   x {category_totals[category]}")
-        else:
-            lines.append(f"{category:20} x {category_totals[category]}")
+        lines.append(f"{category:20} x {category_totals[category]}")
 
     for category in [
-        Categories.PLATES,
-        Categories.PLATES_MODIFIED,
-        Categories.BRICKS,
-        Categories.TILES,
+        "PLATES",
+        "BRICKS",
+        "TILES",
     ]:
         details = size_details.get(category, {})
         if not details:

@@ -4,6 +4,6 @@ tile.py
 Indexes for standard LEGO tiles.
 """
 
-from catalog import Categories, build_index_for_category
+from catalog.utils import build_index_for_category
 
-TILES = build_index_for_category(Categories.TILES)
+TILES = build_index_for_category("TILES")

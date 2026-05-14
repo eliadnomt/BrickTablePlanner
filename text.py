@@ -1,5 +1,3 @@
-from catalog import Parts
-
 LETTERS_5x7 = {
     "A": [
         "..#..",
@@ -308,7 +306,7 @@ def build_text_from_top_left(
 
                 lines.append(
                     f"1 {color} {x:.6f} {y:.6f} {z:.6f} "
-                    f"1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                    f"1 0 0 0 1 0 0 0 1 3024.dat"
                 )
 
         cursor_x += 5 + letter_spacing
@@ -351,7 +349,7 @@ def build_text_vertical_from_top_left(
 
                 lines.append(
                     f"1 {color} {x:.6f} {y:.6f} {z:.6f} "
-                    f"1 0 0 0 1 0 0 0 1 {Parts.PLATE_1x1}"
+                    f"1 0 0 0 1 0 0 0 1 3024.dat"
                 )
 
         cursor_z -= 7 + line_spacing
