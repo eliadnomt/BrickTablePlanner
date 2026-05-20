@@ -1,0 +1,14 @@
+first_name,languages,related_guests
+Sophie,French,Laurent;Marie
+Laurent,French;English,Sophie
+Marie,French,Sophie
+Pierre,French,
+Yves,French,
+Hans,German;English,Greta
+Greta,German,Hans
+Anna,German,
+Bob,English,Alice
+Alice,English,Bob
+Carl,English,
+Dmitri,Russian,Olga
+Olga,Russian,Dmitri

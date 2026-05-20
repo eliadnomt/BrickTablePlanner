@@ -3,3 +3,6 @@ __pycache__/
 venv/
 .idea/
 .DS_Store
+.claude/
+.coverage
+.vscode/

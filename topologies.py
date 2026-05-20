@@ -3,6 +3,12 @@ TOPOLOGIES = {
     "three_columns_bottom_names": "Three columns / names below",
 }
 
+# Maximum number of tables each layout can hold (None = no fixed limit).
+TOPOLOGY_MAX_TABLES = {
+    "two_columns_center_names": 10,
+    "three_columns_bottom_names": None,
+}
+
 
 def get_topology_label(topology_key):
     return TOPOLOGIES[topology_key]
@@ -10,6 +16,11 @@ def get_topology_label(topology_key):
 
 def get_topology_names():
     return list(TOPOLOGIES.keys())
+
+
+def get_topology_max_tables(topology_key):
+    """Return the maximum number of tables the layout supports, or None."""
+    return TOPOLOGY_MAX_TABLES.get(topology_key)
 
 
 def compute_layout(table_count, topology_key):
@@ -47,29 +58,29 @@ def compute_layout(table_count, topology_key):
         if table_count > 10:
             raise ValueError("two_columns_center_names supports up to 10 tables")
 
-        # Layout:
-        # 1   6
-        # 2   7
-        # 3   8
-        # 4   9
-        # 5  10
+        # Tables split as evenly as possible between the left and right columns,
+        # numbered down the left column then down the right column. Example for
+        # 6 tables:
         #
-        # Names are on the CENTER column (plate_col = 1).
-        grid_cols = 3
-        grid_rows = 5
+        # 1   4
+        # 2   5
+        # 3   6
+        #
+        # Names are on the CENTER column (plate_col = 1), rows 1 and 2.
+        left_count = (table_count + 1) // 2
+        right_count = table_count // 2
 
-        left_count = min(5, table_count)
-        right_count = max(0, table_count - 5)
+        grid_cols = 3
+        # Rows 1 and 2 of the centre column hold the partner names.
+        grid_rows = max(left_count, 3)
 
         table_positions = []
 
         for i in range(left_count):
-            digit = str(i + 1)
-            table_positions.append((digit, i, 0))
+            table_positions.append((str(i + 1), i, 0))
 
         for i in range(right_count):
-            digit = str(6 + i)
-            table_positions.append((digit, i, 2))
+            table_positions.append((str(left_count + 1 + i), i, 2))
 
         name_positions = [
             {
